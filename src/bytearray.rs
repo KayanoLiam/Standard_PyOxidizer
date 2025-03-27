@@ -1,4 +1,3 @@
-// src/lib.rs
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyByteArray};
 use pyo3::exceptions::PyTypeError;
@@ -145,11 +144,13 @@ fn py_slice_indices(
 mod tests {
     use super::*;
     use pyo3::Python;
+    use std::ffi::CStr;
 
     #[test]
     fn test_from_bytes() {
+        pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let bytes = PyBytes::new_bound(py, b"hello");
+            let bytes = PyBytes::new(py, b"hello");
             let ba = ByteArray::new(py, &bytes).unwrap();
             assert_eq!(ba.data, b"hello");
         });
@@ -157,8 +158,10 @@ mod tests {
 
     #[test]
     fn test_from_str() {
+        pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let s = py.eval_bound("'hello'", None, None).unwrap();
+            let code = CStr::from_bytes_with_nul(b"'hello'\0").unwrap();
+            let s = py.eval(code, None, None).unwrap();
             let ba = ByteArray::new(py, &s).unwrap();
             assert_eq!(ba.data, b"hello");
         });
@@ -166,6 +169,7 @@ mod tests {
 
     #[test]
     fn test_to_bytes() {
+        pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
             let ba = ByteArray { data: b"hello".to_vec() };
             let py_bytes = ba.to_bytes(py);
