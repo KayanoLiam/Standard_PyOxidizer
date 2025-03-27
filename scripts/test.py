@@ -1,5 +1,6 @@
-import Standard_PyOxidizer
+# import Standard_PyOxidizer
 import pytest
+import Standard_PyOxidizer
 
 def test_creation_from_bytes():
     """测试从bytes创建ByteArray"""

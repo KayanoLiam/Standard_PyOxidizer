@@ -1,15 +1,15 @@
 mod abs;
-mod impls;
 mod ascii;
-mod Number_system;
 mod bytearray;
+mod impls;
+mod number_system;
 
 use pyo3::prelude::*;
 
 /// A Python module implemented in Rust.
 #[pymodule]
-// fn Standard_PyOxidizer(m: &Bound<'_, PyModule>) -> PyResult<()> {
 fn Standard_PyOxidizer(m: &Bound<'_, PyModule>) -> PyResult<()> {
+// fn standard_py_oxidizer(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
     m.add_function(wrap_pyfunction!(abs::abs_i32, m)?)?;
     m.add_function(wrap_pyfunction!(abs::abs_i64, m)?)?;
@@ -18,7 +18,7 @@ fn Standard_PyOxidizer(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(abs::abs_f64, m)?)?;
     m.add_function(wrap_pyfunction!(abs::abs_complex, m)?)?;
     m.add_function(wrap_pyfunction!(ascii::ascii, m)?)?;
-    m.add_function(wrap_pyfunction!(Number_system::bin, m)?)?;
+    m.add_function(wrap_pyfunction!(number_system::bin, m)?)?;
     m.add_class::<bytearray::ByteArray>()?;
     Ok(())
 }
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn abs_complex_test() {
-        assert_eq!(abs::abs_complex(-1.0,-1.0), Complex::new(1.0,1.0).norm());
+        assert_eq!(abs::abs_complex(-1.0, -1.0), Complex::new(1.0, 1.0).norm());
     }
     #[test]
     fn ascii_test() {
@@ -58,6 +58,6 @@ mod tests {
     }
     #[test]
     fn bin_test() {
-        assert_eq!(Number_system::bin(10,true), "0b10".to_string());
+        assert_eq!(number_system::bin(10, true), "0b1010".to_string());
     }
 }

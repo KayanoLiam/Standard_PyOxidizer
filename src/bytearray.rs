@@ -153,7 +153,7 @@ mod tests {
     #[test]
     fn test_from_bytes() {
         Python::with_gil(|py| {
-            let bytes = PyBytes::new_bound(py, b"hello");
+            let bytes = PyBytes::new(py, b"hello");
             let ba = ByteArray::new(py, &bytes).unwrap();
             assert_eq!(ba.data, b"hello");
         });
