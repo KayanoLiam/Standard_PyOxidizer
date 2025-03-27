@@ -120,27 +120,23 @@ fn py_slice_indices(
     step: isize,
     len: isize,
 ) -> PyResult<(isize, isize)> {
-    let (mut start, mut end) = match step.signum() {
-        1 => {
-            let start = start.unwrap_or(0);
-            let end = end.unwrap_or(len);
-            (start.clamp(0, len), end.clamp(0, len))
-        }
-        -1 => {
-            let start = start.unwrap_or(len - 1);
-            let end = end.unwrap_or(-1);
-            (start.clamp(-1, len - 1), end.clamp(-1, len - 1))
-        }
-        _ => unreachable!(),
-    };
-
     // 处理负索引
+    let mut start = start.unwrap_or(if step < 0 { len - 1 } else { 0 });
+    let mut end = end.unwrap_or(if step < 0 { -1 } else { len });
+    
     if start < 0 {
         start += len;
     }
     if end < 0 {
         end += len;
     }
+
+    // 应用边界检查
+    let (start, end) = match step.signum() {
+        1 => (start.clamp(0, len), end.clamp(0, len)),
+        -1 => (start.clamp(0, len - 1), end.clamp(0, len - 1)),
+        _ => unreachable!(),
+    };
 
     Ok((start, end))
 }
@@ -153,7 +149,7 @@ mod tests {
     #[test]
     fn test_from_bytes() {
         Python::with_gil(|py| {
-            let bytes = PyBytes::new(py, b"hello");
+            let bytes = PyBytes::new_bound(py, b"hello");
             let ba = ByteArray::new(py, &bytes).unwrap();
             assert_eq!(ba.data, b"hello");
         });
